@@ -1,103 +1,74 @@
 import * as React from 'react';
-import Dropzone from 'react-dropzone'
 import './App.css';
-import {Button} from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import {ThemeContext, themes} from './theme-context';
+
+let WEATHER_KEY = "48208adbdeedee4ea3e7b0e55b68f4f2";
 interface IState {
-  imageFiles: any[],
-  results: any,
-  dropzone: any
-  theme: any,
-  toggleTheme: any
+  temperature: any,
+  city: any,
+  country: any
+  humidity: any,
+  description: any,
+  error: any
 }
 export default class App extends React.Component<{}, IState>  {
-  constructor(props: any) {
+  constructor(props:any){
     super(props)
     this.state = {
-      imageFiles: [],
-      results: "",
-      dropzone: this.onDrop.bind(this),
-      theme: themes.dark,
-      toggleTheme: this.toggleTheme(),
-    };
+      temperature: undefined,
+      city: undefined,
+      country: undefined,
+      humidity: undefined,
+      description: undefined,
+      error: undefined
+    }
   }
-  public toggleTheme = () => {
-    this.setState(state => ({
-      theme:
-        state.theme === themes.light
-          ? themes.dark
-          : themes.light,
-    }));
-  };
-  public onDrop(files: any) {
-    this.setState({
-      imageFiles: files,
-      results: ""
-    })
-    const file = files[0]
-    const reader = new FileReader();
-    reader.onload = (readerEvt: any) => {
-        const binaryString = readerEvt.target!!.result;
-        this.upload(btoa(binaryString))
-    };
 
-    reader.readAsBinaryString(file);
+ 
+  getWeatherData= async (e:any) => {
+    e.preventDefault();
+    let city = e.target.elements.city.value;
+    let country = e.target.elements.country.value;
+    let weatherData = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${WEATHER_KEY}&units=metric`);
+    let weatherJson = await weatherData.json();
+    if (city && country){
+      this.setState({
+        temperature : weatherJson.main.temp,
+        city: weatherJson.name,
+        country: weatherJson.sys.country,
+        humidity: weatherJson.main.humidity,
+        description: weatherJson.weather[0].description,
+        error: ""
+      });
+    } else {
+      this.setState({
+        error: "Please enter a correct value"
+      })
+
+    }
+    
   }
   
-  public upload(base64String: string) {
-    fetch('https://danktrigger.azurewebsites.net/api/dank', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-      body: JSON.stringify({
-        file: base64String,
-      })
-    })
-    .then((response : any) => {
-      if (!response.ok) {
-        this.setState({results: response.statusText})
-      }
-      else {
-        response.json().then((data:any) => this.setState({results: data[0].class}))
-      }
-      return response
-    })
-  }
   public render() {
+  
     return (
-      <div className="container-fluid">
-          <ThemeContext.Provider value={this.state}>
-
-        <ThemeContext.Consumer>
-        {theme => (
-        <div className="centreText" style={{backgroundColor: theme.theme.background, color:theme.theme.foreground}}>
-          <div className="dropZone">
-            <Dropzone onDrop={this.state.dropzone} style={{position: "relative"}}>
-              <div style={{height: '50vh'}}>
-                {
-                  this.state.imageFiles.length > 0 ? 
-                    <div>{this.state.imageFiles.map((file) => <img className="image" key={file.name} src={file.preview} /> )}</div> :
-                    <p>Try dropping some files here, or click to select files to upload.</p>
-                }  
-              </div>
-            </Dropzone>
-          </div>
-          <div  className="dank">
-          {
-            this.state.results === "" && this.state.imageFiles.length > 0 ?
-            <CircularProgress thickness={3} /> :
-            <p>{this.state.results}</p>
-          }
-          </div>
-        </div>
-        )}
-        </ThemeContext.Consumer>
+      <div>
         <div>
-          <Button onClick={this.toggleTheme}>Change Theme</Button>
+          <form onSubmit={this.getWeatherData}>
+          <input type="text" name="city" placeholder="City"/>
+          <input type="text" name="country" placeholder="Country"/>
+          <button>Get weather</button>
+          </form>
         </div>
-        </ThemeContext.Provider>
+        <div>
+          { this.state.city && this.state.country && <p>Location: {this.state.city}, {this.state.country}</p>}
+          { this.state.temperature && <p>Temperature: {this.state.temperature}</p>}
+          { this.state.humidity && <p>Humidity: {this.state.humidity}</p>}
+          { this.state.description && <p>Conditions: {this.state.description}</p>}
+          { this.state.error && <p>{this.state.error}</p>}
+          
+          
+        </div>
+
       </div>
     );
   }
