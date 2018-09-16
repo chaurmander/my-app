@@ -5,11 +5,11 @@ import {AppBar, Toolbar, Typography} from '@material-ui/core/';
 
 export const Header: React.StatelessComponent<{}> = () => {
     return (
-            <AppBar position="static">
+            <AppBar position="static" >
                 <Toolbar>
               
-                    <Typography variant="display2" color="inherit" align='center'>
-                        <Link style={{color: "white" }} to="/">Weather</Link>
+                    <Typography variant="display4" color="inherit" align='center'>
+                        <Link style={{  color: "white", textAlign: "center" }} to="/">Weather</Link>
                         
                     </Typography>
                 </Toolbar>

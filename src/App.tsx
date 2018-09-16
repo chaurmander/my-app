@@ -26,7 +26,7 @@ export default class App extends React.Component  {
     console.log(weatherJson)
     if(weatherJson.cod === "404"){
        this.setState({
-        error: "Please enter a correct value"
+        error: "Country or City not found."
       })
     } else {
       this.setState({
@@ -67,18 +67,30 @@ export default class App extends React.Component  {
           <form>
             <Grid container spacing={0} direction="column" alignItems="center" style={{minHeight: '100vh'}}>
               <Grid item xl alignItems="center">
-                <Paper style={{padding:20 ,minWidth:400,marginTop:20,fontSize:20}}>
-                  <Input name="city" value={this.state.city} placeholder="City" onChange={e=> this.handleChange(e)}  fullWidth/><br/>
-                  <Input name="country" value={this.state.country} placeholder="Country" onChange={e=> this.handleChange(e)}/><br/>
-                  <Button onClick={e=> this.onSubmit(e)}>Enter</Button><br/>
+                <Paper style={{padding:20 ,minWidth:400,marginTop:20,fontSize:10, maxWidth:400}}>
+                  <h1>Enter a City and Country code i.e Auckland, NZ</h1>
+                  
+                  <Input font-size="20px" name="city" value={this.state.city} placeholder="City" onChange={e=> this.handleChange(e)}  fullWidth/><br/>
+                  <Input name="country" value={this.state.country} placeholder="Country" onChange={e=> this.handleChange(e)} fullWidth/><br/>
+                  <br/>
+                  <Button variant="contained" color="primary" onClick={e=> this.onSubmit(e)}>Enter</Button>
+                  <br/>
+                  <p>If button doesnt work your browser may be blocking the script due it believing it is a unauthenticated source. Please use chrome and disable the warning 
+                    it should show up as a shield upper right of the address bar.
+                  </p>
                 </Paper>
                 
               </Grid>
               <Grid item xl>
-                <Paper style={{padding:20 ,minWidth:400,marginTop:20}}>
-                  {JSON.stringify(this.state,null,2)}
+                <Paper style={{padding:20 ,minWidth:400,marginTop:20, maxWidth:400}}>
+                  <h1>Results</h1>
+                  { !this.state.error && this.state.city && <p>Location: {this.state.city}, {this.state.country}</p>}
+                  { !this.state.error && this.state.temperature && <p>Temperature(C): {this.state.temperature}</p>}
+                  { !this.state.error && this.state.humidity && <p>Humidity(%): {this.state.humidity}</p>}
+                  { !this.state.error && this.state.description && <p>Conditions: {this.state.description}</p>}
+                  { this.state.error && <p>{this.state.error}</p>}
                 </Paper>
-                
+                  
               </Grid>
               
              
