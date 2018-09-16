@@ -62,7 +62,7 @@ export default class App extends React.Component  {
   public render() {
     
     return (
-      
+        
         <div>
           <form>
             <Grid container spacing={0} direction="column" alignItems="center" style={{minHeight: '100vh'}}>
@@ -70,7 +70,7 @@ export default class App extends React.Component  {
                 <Paper style={{padding:20 ,minWidth:400,marginTop:20,fontSize:10, maxWidth:400}}>
                   <h1>Enter a City and Country code i.e Auckland, NZ</h1>
                   
-                  <Input font-size="20px" name="city" value={this.state.city} placeholder="City" onChange={e=> this.handleChange(e)}  fullWidth/><br/>
+                  <Input name="city" value={this.state.city} placeholder="City" onChange={e=> this.handleChange(e)}  fullWidth/><br/>
                   <Input name="country" value={this.state.country} placeholder="Country" onChange={e=> this.handleChange(e)} fullWidth/><br/>
                   <br/>
                   <Button variant="contained" color="primary" onClick={e=> this.onSubmit(e)}>Enter</Button>
